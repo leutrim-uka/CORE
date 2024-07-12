@@ -20,9 +20,9 @@
 # Directory containing the json.xz files
 input_dir="core_metadata"
 # Directory to store the unzipped json files temporarily
-temp_dir="temp"
+temp_dir="temp_output_parallel_filtering"
 # Directory to store the final filtered json files
-output_dir="output"
+output_dir="filtered_dataset"
 # Log file path
 log_file="parallel_processing_logs.log"
 
