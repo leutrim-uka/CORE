@@ -45,10 +45,17 @@ def process_file(file_name, data_dir, results_dir):
         for line in f:
             try:
                 document = json.loads(line.strip())
-                core_id = document.get("id")
+                core_id = document.get("coreId")
                 title = document.get("title")
+                # Title can be empty. If so, check full text
                 if title is None:
-                    continue
+                    title = document.get("fullText")
+                    # If also full text is empty, continue to next article
+                    if title is None:
+                        continue
+                    else:
+                        # If there's full text, take first 50 chars
+                        title = title[:50]
                 language = predict_language(title)
                 results.append((core_id, language))
             except json.JSONDecodeError:
