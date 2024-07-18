@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - NAME=World
+    depends_on:
+      - ollama-server
+
+  ollama-server:
+    image: ollama/ollama:latest
+    ports:
+      - "4000:4000"
+    command: ["ollama", "run", "mistral"]
