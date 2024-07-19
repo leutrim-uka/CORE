@@ -1,19 +1,29 @@
 version: '3.8'
 
 services:
+  ollama-server:
+    image: ollama/ollama
+    container_name: ollama-server-title-detection
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    command: ["serve"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
   app:
     build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
-    environment:
-      - NAME=World
     depends_on:
       - ollama-server
+    environment:
+      - OLLAMA_HOST=ollama-server-title-detection
+      - OLLAMA_PORT=11434
+    volumes:
+      - .:/app
 
-  ollama-server:
-    image: ollama/ollama:latest
-    ports:
-      - "4000:4000"
-    command: ["ollama", "run", "mistral"]
+volumes:
+  ollama:
