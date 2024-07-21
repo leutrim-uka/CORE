@@ -1,26 +1,29 @@
-# Use an official Python 3.12 runtime as a parent image
-FROM python:3.12
+# Use a CUDA-enabled base image
+FROM nvidia/cuda:12.3.0-runtime-ubuntu22.04
 
-# Set the working directory in the container
+# Set the environment variable to prevent interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Python and necessary packages
+RUN apt-get update
+RUN apt-get install -y curl
+RUN apt-get install -y python3 
+RUN apt-get install -y python3-pip
+
+# Install Ollama (assuming there's an installation command)
+RUN curl -fsSL https://ollama.com/install.sh | sh
+
+# Copy your application code into the container
 WORKDIR /app
-
-# Copy the requirements file into the container
-COPY requirements.txt ./
-
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Install wget for downloading the fastText model
-RUN apt-get update && apt-get install -y wget curl
-
-# Copy the current directory contents into the container at /app
 COPY . /app
 
-# Expose the port the Ollama server runs on
+# Install application dependencies
+RUN pip3 install -r requirements.txt
+
+# Expose the port that Ollama server uses
 EXPOSE 11434
 
-# Make script executable
 RUN chmod +x setup.sh
 
-# Run the setup script when the container launches
-CMD ["sh", "./setup.sh"]
+# Run the Ollama server and your application
+CMD ["sh", "-c", "ollama serve & sleep 10 && ./setup.sh"]
