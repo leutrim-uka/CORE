@@ -22,7 +22,7 @@ class TitleProcessor:
             for line in f:
                 try:
                     document = json.loads(line.strip())
-                    core_id = document.get("id")
+                    core_id = document.get("coreId")
                     title = document.get("title")
                     if title is None:
                         title = document.get("fullText")
