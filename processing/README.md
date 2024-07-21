@@ -29,3 +29,14 @@ The script generates three different outputs:
 If a file from the dataset happens to not have any full-text articles, the corresponding json.xz file will not be stored in the output directory.
 
 _Note: There is a second file with an alternative approach for this very task: `alternative_dataset_filtering.sh`. This file doesn't use the `parallel` library, as we didn't have sudo rights to install it in the cluster. The output remains the same._
+
+# Running with Docker
+First, build the image using the Dockerfile through the following command:
+```{bash}
+docker build -t core-image .
+```
+
+Then run the container based on the built image with this command:
+```{bash}
+docker run --gpus all --name core-container -p 11434:11434 -v ~/data:/app/data -v ~/results:/app/results core-image
+```
