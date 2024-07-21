@@ -10,9 +10,10 @@ class TitleProcessor:
     def __init__(self, data_dir: str, results_dir: str):
         self.data_dir = data_dir
         self.results_dir = results_dir
-        self.language_detector = LanguageDetector()
+        # self.language_detector = LanguageDetector()
 
     def process_file(self, file_name: str):
+        print("in process file")
         results = []
         file_path = os.path.join(self.data_dir, file_name)
 
@@ -22,7 +23,7 @@ class TitleProcessor:
             for line in f:
                 try:
                     document = json.loads(line.strip())
-                    core_id = document.get("coreId")
+                    core_id = document.get("id")
                     title = document.get("title")
                     if title is None:
                         title = document.get("fullText")
@@ -32,10 +33,10 @@ class TitleProcessor:
                         else:
                             # If there's full text, take first 50 chars
                             title = title[:50]
-                    language = self.language_detector.predict_language(title)
+                    # language = self.language_detector.predict_language(title)
                     category = llama_classifier.classify(title)
                     # category = "test"
-                    results.append((core_id, language, category))
+                    results.append((core_id, category))
 
                 except json.JSONDecodeError:
                     print(f"Skipping malformed JSON line: {line.strip()}")
@@ -44,7 +45,8 @@ class TitleProcessor:
                                         f"{os.path.basename(file_path)}_lang.csv")
         with open(output_file_path, 'w', newline='', encoding='utf-8') as csvfile:
             csv_writer = csv.writer(csvfile)
-            csv_writer.writerow(['core_id', 'language', 'category'])  # Write header row
+            csv_writer.writerow(['core_id', 'category'])  # Write header row
             csv_writer.writerows(results)  # Write data rows
+            print(f"Writing file to {output_file_path}")
 
 
